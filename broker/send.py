@@ -4,14 +4,20 @@ from aio_pika import connect_robust, exceptions, Message
 from aio_pika.abc import AbstractConnection, AbstractChannel
 from dotenv import dotenv_values
 
-from config.entities import ResponseQuery
-from config.log import logger
+from entities import ResponseQuery
+from log import logger
 
 
 config = dotenv_values('.env')
 
 
 async def create_message(response_query: ResponseQuery, message_id: str) -> Message:
+    """
+    Создание сообщения
+    :param response_query: ответ на запрос
+    :param message_id: идентификатор сообщения
+    :return: сообщение
+    """
     return Message(
         body=response_query.model_dump_json().encode('utf-8'),
         content_type="application/json",
@@ -22,6 +28,12 @@ async def create_message(response_query: ResponseQuery, message_id: str) -> Mess
 
 
 async def send_response_query(response_query: ResponseQuery, message_id: str) -> bool:
+    """
+    Отправка ответа на запрос
+    :param response_query: ответ на запрос
+    :param message_id: идентификатор сообщения
+    :return: True, если сообщение не отправлено, иначе False
+    """
     try:
         connection: AbstractConnection = await connect_robust(
             host=config.get("RABBITMQ_HOST"),
@@ -32,7 +44,7 @@ async def send_response_query(response_query: ResponseQuery, message_id: str) ->
     except exceptions.CONNECTION_EXCEPTIONS as e:
         logger.error(str(e))
         await asyncio.sleep(3)
-        return await send_response_query(response_query)
+        return await send_response_query(response_query, message_id)
     async with connection:
         routing_key: str = config.get("RABBITMQ_RESPONSE_QUEUE")
         channel: AbstractChannel = await connection.channel()

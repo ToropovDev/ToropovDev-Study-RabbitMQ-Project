@@ -5,6 +5,9 @@ from pydantic import BaseModel
 
 
 class RequestUnbagQuery(BaseModel):
+    """
+    Запрос на распаковку bag файла
+    """
     id: uuid.UUID
     operation_type: str
     files: list[str]
@@ -19,6 +22,9 @@ class RequestUnbagQuery(BaseModel):
 
 
 class RequestQuery(BaseModel):
+    """
+    Запрос на выполнение операции над облаком точек
+    """
     id: uuid.UUID
     operation_type: str
     file: str
@@ -33,6 +39,9 @@ class RequestQuery(BaseModel):
 
 
 class ResponseQuery(BaseModel):
+    """
+    Ответ на запрос
+    """
     id: uuid.UUID
     operation_type: str
     file: str

@@ -1,14 +1,20 @@
 import os
 import pathlib
 
-from config.entities import RequestQuery, ResponseQuery, RequestUnbagQuery
+from entities import RequestQuery, ResponseQuery, RequestUnbagQuery
 from pct.utils import rotate_point_cloud_by_axis, swap_point_cloud_file_axes, \
     convert_ply_to_xyz, color_ply_by_height
 from pct.ros.io import create_point_cloud_from_bags
-from config.log import logger
+from log import logger
 
 
 def get_axis_swap(query: RequestQuery, filename: str) -> ResponseQuery:
+    """
+    Обработчик запроса на перестановку осей
+    :param query: запрос
+    :param filename: имя файла
+    :return: ответ
+    """
     try:
         point_cloud = pathlib.Path(query.file)
         ax = query.params.get("ax")
@@ -34,6 +40,12 @@ def get_axis_swap(query: RequestQuery, filename: str) -> ResponseQuery:
 
 
 def get_axiswise_rot(query: RequestQuery, filename: str) -> ResponseQuery:
+    """
+    Обработчик запроса на поворот облака точек
+    :param query: запрос
+    :param filename: имя файла
+    :return: ответ
+    """
     try:
         point_cloud = pathlib.Path(query.file)
         ax = query.params.get("ax")
@@ -59,6 +71,12 @@ def get_axiswise_rot(query: RequestQuery, filename: str) -> ResponseQuery:
 
 
 def get_conv_ply_xyz(query: RequestQuery, filename: str) -> ResponseQuery:
+    """
+    Обработчик запроса на конвертацию из ply в xyz
+    :param query: запрос
+    :param filename: имя файла
+    :return: ответ
+    """
     try:
         ply_cloud = pathlib.Path(query.file)
         xyz_cloud = convert_ply_to_xyz(ply_cloud)
@@ -75,6 +93,12 @@ def get_conv_ply_xyz(query: RequestQuery, filename: str) -> ResponseQuery:
 
 
 def get_height_color(query: RequestQuery, filename: str) -> ResponseQuery:
+    """
+    Обработчик запроса на окраску облака точек по высоте
+    :param query: запрос
+    :param filename: имя файла
+    :return: ответ
+    """
     try:
         point_cloud = pathlib.Path(query.file)
         height_axis = query.params.get("height_axis")
@@ -96,6 +120,12 @@ def get_height_color(query: RequestQuery, filename: str) -> ResponseQuery:
 
 
 def get_unbag(query: RequestUnbagQuery, filename: str) -> ResponseQuery:
+    """
+    Обработчик запроса на конвертацию из bag
+    :param query: запрос
+    :param filename: имя файла
+    :return: ответ
+    """
     try:
         bag_files = query.files
         output_path = query.output_path

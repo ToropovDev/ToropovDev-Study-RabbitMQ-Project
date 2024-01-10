@@ -4,12 +4,16 @@ from aio_pika import connect_robust, exceptions
 from aio_pika.abc import AbstractChannel, AbstractQueue, AbstractConnection
 from dotenv import dotenv_values
 
-from config.log import logger
+from log import logger
 
 config = dotenv_values('.env')
 
 
-async def create_request_queue():
+async def create_request_queue() -> AbstractQueue:
+    """
+    Создание очереди запросов
+    :return: очередь запросов
+    """
     try:
         connection: AbstractConnection = await connect_robust(
             host=config.get("RABBITMQ_HOST"),
@@ -21,7 +25,7 @@ async def create_request_queue():
         logger.error(str(e))
         await asyncio.sleep(3)
         return await create_request_queue()
-    
+
     routing_key: str = config.get("RABBITMQ_REQUEST_QUEUE")
     try:
         channel: AbstractChannel = await connection.channel()
@@ -35,4 +39,3 @@ async def create_request_queue():
         )
 
     return queue
-

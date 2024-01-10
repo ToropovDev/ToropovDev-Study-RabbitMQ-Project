@@ -3,6 +3,11 @@ from loguru import logger
 
 
 def start_log(log_file_path='logfile.log'):
+    """
+    Настройка логирования
+    :param log_file_path: путь к файлу логирования
+    :return: None
+    """
     logger.remove()
     logger.add(log_file_path, level="INFO",
                format="<green>[{time:YYYY-MM-DD HH:mm:ss}]</green> <level>{level}</level> <cyan>| {name}</cyan> "
